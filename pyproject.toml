@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "rhythmiq"
+version = "0.1.0"
+description = ""
+authors = ["Yerly Sevan <sevan.yerly@he-arc.ch>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.1.1"
+djangorestframework = "^3.15.2"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
