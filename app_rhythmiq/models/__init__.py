@@ -1,0 +1,1 @@
+from app_rhythmiq.models.user_profile import UserProfile
