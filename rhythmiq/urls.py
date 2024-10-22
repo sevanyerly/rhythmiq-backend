@@ -40,4 +40,7 @@ urlpatterns = [
     re_path(
         r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
     ),
+
+    path('downloads/', app_views.DownloadedSongList.as_view(), name='downloaded-song-list'),
+    path('downloads/<int:pk>/', app_views.DownloadedSongDetail.as_view(), name='downloaded-song-detail'),
 ]
