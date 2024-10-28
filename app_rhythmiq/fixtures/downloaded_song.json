@@ -1,2 +1,20 @@
 [
+{
+    "model": "app_rhythmiq.downloadedsong",
+    "pk": 1,
+    "fields": {
+        "user": 1,
+        "song": 1,
+        "last_downloaded_at": "2024-11-20T22:41:07.649Z"
+    }
+},
+{
+    "model": "app_rhythmiq.downloadedsong",
+    "pk": 2,
+    "fields": {
+        "user": 2,
+        "song": 1,
+        "last_downloaded_at": "2024-11-20T22:41:11.120Z"
+    }
+}
 ]

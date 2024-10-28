@@ -1,2 +1,18 @@
 [
+{
+    "model": "app_rhythmiq.song",
+    "pk": 1,
+    "fields": {
+        "name": "Somewhere over the Rainbow",
+        "cover_image_path": "songs/Screenshot_from_2024-11-20_23-35-17.png",
+        "description": "Hear never before heard Isolated Vocals from \"Over the Rainbow\"!",
+        "mp3_path": "songs/Somewhere_over_the_Rainbow.mp3",
+        "created_at": "2024-11-20T22:39:00.256Z",
+        "duration": "03:47:00",
+        "streaming_numbers": 0,
+        "artists": [
+            2
+        ]
+    }
+}
 ]

@@ -1,2 +1,26 @@
 [
+{
+    "model": "app_rhythmiq.userprofile",
+    "pk": 1,
+    "fields": {
+        "user": 1,
+        "showed_name": "vanlens",
+        "profile_picture_path": "profiles/squeezie.jpg",
+        "private": false,
+        "following_artists": []
+    }
+},
+{
+    "model": "app_rhythmiq.userprofile",
+    "pk": 2,
+    "fields": {
+        "user": 2,
+        "showed_name": "jeanjeanlartiste",
+        "profile_picture_path": "profiles/he-arc.png",
+        "private": true,
+        "following_artists": [
+            1
+        ]
+    }
+}
 ]
