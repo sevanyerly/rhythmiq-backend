@@ -29,6 +29,7 @@ from django.conf.urls.static import static
 router = DefaultRouter()
 router.register(r"downloadedSong", rhythmiq_views.DownloadedSongViewSet)
 router.register(r"signup", rhythmiq_views.SignUpViewSet, basename="signup")
+router.register(r"songs", rhythmiq_views.SongViewSet, basename="song")
 
 urlpatterns = [
     path("admin/", admin.site.urls),

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from ..models import UserProfile
 
+
 from django.contrib.auth.models import User
 
 
@@ -30,3 +31,20 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "account_type",
         ]
         read_only_fields = ["user"]
+
+
+class ArtistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = [
+            "id",
+            "showed_name",
+            "profile_picture_path",
+            "account_type",
+        ]
+        read_only_fields = ["user"]
+
+    def to_representation(self, instance):
+        if instance.account_type == 2:
+            return super().to_representation(instance)
+        return None
