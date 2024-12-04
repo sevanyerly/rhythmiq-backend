@@ -4,9 +4,12 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from .user_profile import UserProfile
 from .song import Song
+import uuid
 
 
 def playlist_cover_image_path(instance, filename):
+    ext = filename.split(".")[-1]
+    filename = f"{uuid.uuid4()}.{ext}"
     return f"playlists/{filename}"
 
 

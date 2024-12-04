@@ -27,9 +27,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 router = DefaultRouter()
-router.register(r"downloadedSong", rhythmiq_views.DownloadedSongViewSet)
+router.register(r"downloadedsongs", rhythmiq_views.DownloadedSongViewSet)
 router.register(r"signup", rhythmiq_views.SignUpViewSet, basename="signup")
-router.register(r"songs", rhythmiq_views.SongViewSet, basename="song")
+router.register(r"songs", rhythmiq_views.SongViewSet, basename="songs")
+router.register(r"genres", rhythmiq_views.GenreViewSet, basename="genres")
+router.register(r"artists", rhythmiq_views.ArtistViewSet, basename="artists")
+# router.register(r"songs/add/", rhythmiq_views.SongCre, basename="artists")
+# router.register(
+#     r"downloadedsongs",
+#     rhythmiq_views.DownloadedSongViewSet,
+#     basename="downloaded-song",
+# )
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -38,6 +46,11 @@ urlpatterns = [
     path(r"api/login/", rhythmiq_views.LoginView.as_view(), name="knox_login"),
     path(r"api/logout/", rhythmiq_views.LogoutView.as_view(), name="knox_logout"),
     path(r"api/logoutall/", knox_views.LogoutAllView.as_view(), name="knox_logoutall"),
+    path(
+        "user/downloaded-songs/",
+        rhythmiq_views.UserDownloadedSongsView.as_view(),
+        name="user_downloaded_songs",
+    ),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),
