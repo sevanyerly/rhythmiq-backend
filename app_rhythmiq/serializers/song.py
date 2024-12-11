@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from ..models import Song, Genre, UserProfile
+from ..models import Song, Genre, UserProfile, Like
 from .user_profile import ArtistSerializer
 from .genre import GenreSerializer
 
@@ -12,6 +12,7 @@ import tempfile
 
 class SongReadSerializer(serializers.ModelSerializer):
     artists = ArtistSerializer(many=True)
+    is_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Song
@@ -26,8 +27,16 @@ class SongReadSerializer(serializers.ModelSerializer):
             "streaming_numbers",
             "artists",
             "genres",
+            "is_liked",  # Ajouter le champ is_liked
         ]
         read_only_fields = ["created_at", "streaming_numbers"]
+
+    def get_is_liked(self, obj):
+        user = self.context.get("request").user
+        if user.is_authenticated:
+            # Check if the user liked this song
+            return Like.objects.filter(user=user.userprofile, song=obj).exists()
+        return False
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
