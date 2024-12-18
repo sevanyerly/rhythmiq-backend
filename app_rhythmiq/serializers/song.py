@@ -5,7 +5,6 @@ from ..models import Song, Genre, UserProfile, Like
 from .user_profile import ArtistSerializer
 from .genre import GenreSerializer
 
-from datetime import time
 import audioread
 import tempfile
 
@@ -27,7 +26,7 @@ class SongReadSerializer(serializers.ModelSerializer):
             "streaming_numbers",
             "artists",
             "genres",
-            "is_liked",  # Ajouter le champ is_liked
+            "is_liked",
         ]
         read_only_fields = ["created_at", "streaming_numbers"]
 
@@ -91,6 +90,17 @@ class SongCreateSerializer(serializers.ModelSerializer):
         attrs["duration"] = duration
         return attrs
 
+    def validate_artists(self, artists):
+        invalid_artists = [artist for artist in artists if artist.account_type != 2]
+        if invalid_artists:
+            invalid_usernames = ", ".join(
+                [artist.user.username for artist in invalid_artists]
+            )
+            raise ValidationError(
+                f"The following users are not artists: {invalid_usernames}"
+            )
+        return artists
+
     def extract_audio_duration(self, file):
         try:
             # Create a temporary file to store the uploaded file
@@ -101,11 +111,12 @@ class SongCreateSerializer(serializers.ModelSerializer):
 
             with audioread.audio_open(temp_file_path) as audio_file:
                 duration_in_seconds = audio_file.duration
+                if duration_in_seconds > 3599:
+                    raise ValueError(
+                        "Audio duration exceeds the 59 minute 59 second limit."
+                    )
 
-                hours, remainder = divmod(duration_in_seconds, 3600)
-                minutes, seconds = divmod(remainder, 60)
-
-                return time(int(hours), int(minutes), int(seconds))
+                return duration_in_seconds
 
         except Exception as e:
             print(f"Error extracting audio duration: {e}")

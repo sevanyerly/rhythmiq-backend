@@ -5,11 +5,13 @@ from django.db.models import Count, Q
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..models import Song
+from ..models import Song, Like, DownloadedSong, UserProfile
 from ..serializers import SongReadSerializer, SongCreateSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .permissions import IsArtist, IsSongArtist
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
+from django.db import models
 
 import mimetypes
 from mutagen import File as MutagenFile
@@ -57,6 +59,13 @@ class SongViewSet(viewsets.ModelViewSet):
 
         if str(user_profile.id) not in artist_ids:
             artist_ids.append(str(user_profile.id))
+
+        artists = UserProfile.objects.filter(id__in=artist_ids)
+        for artist in artists:
+            if artist.account_type != 2:
+                raise ValidationError(
+                    f"The user {artist.user.username} is not an artist."
+                )
 
         serializer.save(artists=artist_ids)
 
@@ -144,4 +153,39 @@ class SongViewSet(viewsets.ModelViewSet):
             )
 
         serializer = self.get_serializer(songs, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
+    def liked_songs(self, request):
+        user = request.user.userprofile
+
+        liked_songs = Like.objects.filter(user=user).values_list("song", flat=True)
+
+        songs = Song.objects.filter(id__in=liked_songs)
+
+        serializer = SongReadSerializer(songs, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
+    def downloaded_songs(self, request):
+        user = request.user.userprofile
+
+        downloaded_songs = (
+            DownloadedSong.objects.filter(user=user)
+            .order_by("-last_downloaded_at")
+            .values_list("song", flat=True)
+        )
+
+        # Filter songs by last_downloaded_at date
+        songs = Song.objects.filter(id__in=downloaded_songs).order_by(
+            models.Case(
+                *[
+                    models.When(id=id, then=models.Value(index))
+                    for index, id in enumerate(downloaded_songs)
+                ],
+                default=models.Value(len(downloaded_songs)),
+                output_field=models.IntegerField(),
+            )
+        )
+        serializer = SongReadSerializer(songs, many=True, context={"request": request})
         return Response(serializer.data)
