@@ -17,22 +17,6 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-
-    class Meta:
-        model = UserProfile
-        fields = [
-            "user",
-            "showed_name",
-            "profile_picture_path",
-            "private",
-            "following_artists",
-            "account_type",
-        ]
-        read_only_fields = ["user"]
-
-
 class ArtistSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
@@ -48,3 +32,31 @@ class ArtistSerializer(serializers.ModelSerializer):
         if instance.account_type == 2:
             return super().to_representation(instance)
         return None
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    account_type_text = serializers.CharField(
+        source="get_account_type_display", read_only=True
+    )
+    user = UserSerializer(read_only=True)
+    following_artists = ArtistSerializer(many=True, required=False)
+
+    class Meta:
+        model = UserProfile
+        fields = [
+            "user",
+            "showed_name",
+            "profile_picture_path",
+            "private",
+            "following_artists",
+            "account_type",
+            "account_type_text",
+        ]
+        read_only_fields = ["user"]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.private:
+            representation["following_artists"] = []
+
+        return representation

@@ -33,6 +33,7 @@ router.register(r"songs", rhythmiq_views.SongViewSet, basename="songs")
 router.register(r"genres", rhythmiq_views.GenreViewSet, basename="genres")
 router.register(r"artists", rhythmiq_views.ArtistViewSet, basename="artists")
 router.register(r"favoritesongs", rhythmiq_views.LikeViewSet, basename="favoritesongs")
+router.register(r"users", rhythmiq_views.UserProfileViewSet, basename="users")
 # router.register(r"songs/add/", rhythmiq_views.SongCre, basename="artists")
 # router.register(
 #     r"downloadedsongs",

@@ -8,4 +8,4 @@ from .like import LikeViewSet
 
 from .song import SongViewSet
 
-from .user_profile import ArtistViewSet
+from .user_profile import ArtistViewSet, UserProfileViewSet

@@ -9,6 +9,8 @@ from django.dispatch import receiver
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_PROFILE_PICTURE = "profiles/default_profile_picture.png"
+
 
 def profile_picture_path(instance, filename):
     ext = filename.split(".")[-1]
@@ -26,7 +28,10 @@ class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     showed_name = models.CharField(max_length=255, blank=True)
     profile_picture_path = models.ImageField(
-        upload_to=profile_picture_path, blank=True, null=True
+        upload_to=profile_picture_path,
+        blank=True,
+        null=True,
+        default=DEFAULT_PROFILE_PICTURE,
     )
     private = models.BooleanField(default=False)
     account_type = models.IntegerField(choices=ACCOUNT_TYPES, default=0)
@@ -39,7 +44,10 @@ class UserProfile(models.Model):
         return self.user.username
 
     def delete_files(self):
-        if self.profile_picture_path:
+        if (
+            self.profile_picture_path
+            and self.profile_picture_path.name != DEFAULT_PROFILE_PICTURE
+        ):
             if os.path.isfile(self.profile_picture_path.path):
                 try:
                     os.remove(self.profile_picture.path)
