@@ -15,6 +15,7 @@ from django.db import models
 
 import mimetypes
 from mutagen import File as MutagenFile
+from django.core.cache import cache
 
 
 class SongViewSet(viewsets.ModelViewSet):
@@ -37,7 +38,7 @@ class SongViewSet(viewsets.ModelViewSet):
         return SongReadSerializer
 
     def perform_create(self, serializer):
-        user_profile = self.request.user.userprofile
+        user_id = self.request.user.id
 
         song_file = self.request.FILES.get("song_path")
         if not song_file:
@@ -47,7 +48,7 @@ class SongViewSet(viewsets.ModelViewSet):
             raise ValidationError(
                 {"error": "The file is not a valid MP3 or WAV audio file."}
             )
-
+        
         image_file = self.request.FILES.get("cover_image_path")
 
         if image_file and not self.is_valid_image_file(image_file):
@@ -57,17 +58,17 @@ class SongViewSet(viewsets.ModelViewSet):
 
         artist_ids = self.request.data.getlist("artists")
 
-        if str(user_profile.id) not in artist_ids:
-            artist_ids.append(str(user_profile.id))
+        if str(user_id) not in artist_ids:
+            artist_ids.append(str(user_id))
 
-        artists = UserProfile.objects.filter(id__in=artist_ids)
+        artists = UserProfile.objects.filter(user__id__in=artist_ids)
         for artist in artists:
             if artist.account_type != 2:
                 raise ValidationError(
                     f"The user {artist.user.username} is not an artist."
                 )
 
-        serializer.save(artists=artist_ids)
+        serializer.save(artists=artists)
 
     def is_valid_audio_file(self, file):
         """
@@ -108,6 +109,8 @@ class SongViewSet(viewsets.ModelViewSet):
             return True
         except Exception as e:
             return False
+
+
 
     @action(detail=False, methods=["get"])
     def filter_songs(self, request):
@@ -187,5 +190,24 @@ class SongViewSet(viewsets.ModelViewSet):
                 output_field=models.IntegerField(),
             )
         )
+        serializer = SongReadSerializer(songs, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["get"])
+    def filter_by_artist(self, request):
+        artist_id = request.query_params.get("artist_id")
+
+        if not artist_id:
+            return Response({"error": "artist_id parameter is required."}, status=400)
+
+        try:
+            artist = UserProfile.objects.get(user__id=artist_id, account_type=2)
+        except UserProfile.DoesNotExist:
+            return Response(
+                {"error": "Artist not found or invalid artist ID."}, status=404
+            )
+
+        songs = Song.objects.filter(artists=artist).order_by("-created_at")
+
         serializer = SongReadSerializer(songs, many=True, context={"request": request})
         return Response(serializer.data)

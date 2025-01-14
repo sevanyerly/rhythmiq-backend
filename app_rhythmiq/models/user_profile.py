@@ -25,7 +25,9 @@ class UserProfile(models.Model):
         (2, "Artist"),
     ]
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True
+    )
     showed_name = models.CharField(max_length=255, blank=True)
     profile_picture_path = models.ImageField(
         upload_to=profile_picture_path,
@@ -50,13 +52,13 @@ class UserProfile(models.Model):
         ):
             if os.path.isfile(self.profile_picture_path.path):
                 try:
-                    os.remove(self.profile_picture.path)
+                    os.remove(self.profile_picture_path)
                     logger.info(
-                        f"Profile picture deleted : {self.profile_picture.path}"
+                        f"Profile picture deleted : {self.profile_picture_path}"
                     )
                 except Exception as e:
                     logger.error(
-                        f"Error when deleting : {self.profile_picture.path} : {e}"
+                        f"Error when deleting : {self.profile_picture_path} : {e}"
                     )
 
 

@@ -16,12 +16,20 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("A user with this email already exists.")
         return value
 
+    def to_representation(self, instance):
+        if self.context.get("request") and self.context["request"].method == "GET":
+            return {"id": instance.id}
+
+        return super().to_representation(instance)
+
 
 class ArtistSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = UserProfile
         fields = [
-            "id",
+            "user",
             "showed_name",
             "profile_picture_path",
             "account_type",

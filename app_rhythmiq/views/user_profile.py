@@ -32,10 +32,11 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     )
     def toggle_follow(self, request, artist_id=None):
         user_profile = request.user.userprofile
-        try:
-            artist = UserProfile.objects.get(id=artist_id, account_type=2)
 
-            if artist.id == user_profile.id:
+        try:
+            artist = UserProfile.objects.get(user__id=artist_id, account_type=2)
+
+            if artist.user.id == user_profile.user.id:
                 return Response(
                     {"error": "You cannot follow yourself."},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -43,16 +44,12 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
             if artist in user_profile.following_artists.all():
                 user_profile.following_artists.remove(artist)
-                return Response(
-                    {"message": f"Successfully unfollowed {artist.showed_name}."},
-                    status=status.HTTP_200_OK,
-                )
+                message = f"Successfully unfollowed {artist.showed_name}."
+            else:
+                user_profile.following_artists.add(artist)
+                message = f"Successfully followed {artist.showed_name}!"
 
-            user_profile.following_artists.add(artist)
-            return Response(
-                {"message": f"Successfully followed {artist.showed_name}!"},
-                status=status.HTTP_200_OK,
-            )
+            return Response({"message": message}, status=status.HTTP_200_OK)
 
         except UserProfile.DoesNotExist:
             return Response(

@@ -20,7 +20,7 @@ class DownloadedSongViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
-        data["user"] = request.user.userprofile.id
+        data["user"] = request.user.id
         song_id = data.get("song")
 
         try:

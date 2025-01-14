@@ -54,10 +54,10 @@ class LoginView(KnoxLoginView):
         token_response = super(LoginView, self).post(request, format=None).data
 
         return Response(
-            {"token": token_response["token"], "user": profile_serializer.data},
+            {"token": token_response["token"], "user_profile": profile_serializer.data},
             status=status.HTTP_200_OK,
         )
-
+    
 
 class LogoutView(LogoutView):
     permission_classes = [IsAuthenticated]

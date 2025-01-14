@@ -13,8 +13,7 @@ class IsSongArtist(BasePermission):
     def has_object_permission(self, request, view, obj):
         if not request.user.is_authenticated:
             return False
-        user_profile = request.user.userprofile
-        return str(user_profile.id) in [str(artist.id) for artist in obj.artists.all()]
+        return str(request.user.id) in [str(artist.id) for artist in obj.artists.all()]
 
 
 class IsProfileOwner(BasePermission):
