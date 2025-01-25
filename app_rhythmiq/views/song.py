@@ -17,12 +17,16 @@ import mimetypes
 from mutagen import File as MutagenFile
 from django.core.cache import cache
 
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.all()
     permission_classes = [
         IsAuthenticatedOrReadOnly,
     ]
+    http_method_names = ["get", "post"]
 
     def get_permissions(self):
         if self.action in ["update", "partial_update", "destroy"]:
@@ -33,7 +37,6 @@ class SongViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action == "create":
-            print("create")
             return SongCreateSerializer
         return SongReadSerializer
 
@@ -48,7 +51,7 @@ class SongViewSet(viewsets.ModelViewSet):
             raise ValidationError(
                 {"error": "The file is not a valid MP3 or WAV audio file."}
             )
-        
+
         image_file = self.request.FILES.get("cover_image_path")
 
         if image_file and not self.is_valid_image_file(image_file):
@@ -92,7 +95,6 @@ class SongViewSet(viewsets.ModelViewSet):
             return True
 
         except Exception as e:
-            print("exeption e")
             return False
 
     def is_valid_image_file(self, file):
@@ -110,24 +112,71 @@ class SongViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return False
 
+    @swagger_auto_schema(
+        operation_description="Increment the view count of a song.",
+        responses={
+            200: openapi.Response(description="View successfully recorded."),
+            400: openapi.Response(description="Invalid song or view already recorded."),
+        },
+    )
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
+    def increment_view(self, request, pk=None):
+        user = request.user
+        song = self.get_object()
 
+        cache_key = f"{user.id}_view_{song.id}"
 
+        # Check if the view has already been registered for this user and song
+        if cache.get(cache_key):
+            return Response(
+                {"message": "View already successfully registered."}, status=200
+            )
+        song.streaming_numbers += 1
+        song.save()
+
+        # Store the view in cache for 30 seconds to prevent duplicate views
+        cache.set(cache_key, "viewed", timeout=30)
+
+        return Response({"message": "View successfully recorded."}, status=200)
+
+    @swagger_auto_schema(
+        operation_description="Filter songs by views, date, or genre.",
+        manual_parameters=[
+            openapi.Parameter(
+                "filter_by",
+                openapi.IN_QUERY,
+                description="Filter criteria: 'views', 'date_views', or 'genre'",
+                type=openapi.TYPE_STRING,
+            ),
+            openapi.Parameter(
+                "genres",
+                openapi.IN_QUERY,
+                description="Comma-separated genre names (required if filter_by is 'genre')",
+                type=openapi.TYPE_STRING,
+            ),
+        ],
+        responses={
+            200: SongReadSerializer(many=True),
+            400: openapi.Response(
+                description="Bad request due to missing or invalid parameters."
+            ),
+        },
+    )
     @action(detail=False, methods=["get"])
     def filter_songs(self, request):
-        """
-        Filters songs by specified type.
-        Query parameters :
-        - filter_by: views, date_views, genre
-        """
         filter_by = request.query_params.get("filter_by")
         if not filter_by:
             return Response({"error": "filter_by parameter is required."}, status=400)
 
+        # Filter by views, getting the top 10 songs based on streaming numbers
         if filter_by == "views":
             songs = Song.objects.order_by("-streaming_numbers")[:10]
 
+        # Filter by date of creation and views, getting the top 10 songs
         elif filter_by == "date_views":
             songs = Song.objects.order_by("-created_at", "-streaming_numbers")[:10]
+
+        # Filter by genre, with validation for genre names
         elif filter_by == "genre":
             genre_names = request.query_params.get("genres")
             if not genre_names:
@@ -158,6 +207,69 @@ class SongViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(songs, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_description="Search for songs by title, description, or tags with relevance scoring.",
+        manual_parameters=[
+            openapi.Parameter(
+                "search",
+                openapi.IN_QUERY,
+                description="Search term",
+                type=openapi.TYPE_STRING,
+            )
+        ],
+        responses={200: SongReadSerializer(many=True), 400: "Bad Request"},
+    )
+    @action(detail=False, methods=["get"])
+    def search_songs(self, request):
+        search_term = request.query_params.get("search")
+        if not search_term:
+            return Response(
+                {"error": "The 'search' parameter is required."}, status=400
+            )
+
+        # Split the search term
+        search_terms = search_term.split()
+
+        query = Q()
+        for term in search_terms:
+            query |= (
+                Q(name__icontains=term)
+                | Q(description__icontains=term)
+                | Q(genres__name__icontains=term)
+            )
+
+        # limit to 10 results
+        songs = Song.objects.filter(query).distinct()[:10]
+
+        # Add relevance score
+        for song in songs:
+            relevance_score = 0
+
+            # For each search term, check how many matches exist
+            for term in search_terms:
+                if term.lower() in song.name.lower():
+                    relevance_score += 2
+                if term.lower() in song.description.lower():
+                    relevance_score += 1
+                if any(
+                    term.lower() in genre.name.lower() for genre in song.genres.all()
+                ):
+                    relevance_score += 1
+
+            song.relevance_score = relevance_score
+
+        songs = sorted(songs, key=lambda x: x.relevance_score, reverse=True)
+
+        serializer = SongReadSerializer(songs, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
+        operation_description="Retrieve the songs liked by the authenticated user.",
+        responses={
+            200: SongReadSerializer(many=True),
+            401: openapi.Response(description="Unauthorized"),
+        },
+    )
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def liked_songs(self, request):
         user = request.user.userprofile
@@ -169,6 +281,14 @@ class SongViewSet(viewsets.ModelViewSet):
         serializer = SongReadSerializer(songs, many=True, context={"request": request})
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_description="Retrieve the songs downloaded by the authenticated user.",
+        responses={
+            200: SongReadSerializer(many=True),
+            401: openapi.Response(description="Unauthorized"),
+            404: openapi.Response(description="No downloaded songs found"),
+        },
+    )
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def downloaded_songs(self, request):
         user = request.user.userprofile
@@ -193,6 +313,24 @@ class SongViewSet(viewsets.ModelViewSet):
         serializer = SongReadSerializer(songs, many=True, context={"request": request})
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_description="Filter songs by a specific artist. The artist is identified by the artist_id parameter.",
+        manual_parameters=[
+            openapi.Parameter(
+                "artist_id",
+                openapi.IN_QUERY,
+                description="The ID of the artist to filter songs by",
+                type=openapi.TYPE_INTEGER,
+            )
+        ],
+        responses={
+            200: SongReadSerializer(many=True),
+            400: openapi.Response(
+                description="Bad Request. Missing or invalid artist_id."
+            ),
+            404: openapi.Response(description="Artist not found or invalid artist ID."),
+        },
+    )
     @action(detail=False, methods=["get"])
     def filter_by_artist(self, request):
         artist_id = request.query_params.get("artist_id")
@@ -207,6 +345,7 @@ class SongViewSet(viewsets.ModelViewSet):
                 {"error": "Artist not found or invalid artist ID."}, status=404
             )
 
+        # Retrieve songs associated with the artist, ordered by creation date
         songs = Song.objects.filter(artists=artist).order_by("-created_at")
 
         serializer = SongReadSerializer(songs, many=True, context={"request": request})
