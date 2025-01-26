@@ -9,6 +9,9 @@ from ..models import UserProfile
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from django.db.models import Q
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -24,6 +27,19 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
 
+    @swagger_auto_schema(
+        operation_description="Follow or unfollow an artist.",
+        manual_parameters=[
+            openapi.Parameter("artist_id", openapi.IN_PATH, type=openapi.TYPE_INTEGER)
+        ],
+        responses={
+            200: openapi.Response(description="Followed or unfollowed successfully."),
+            400: openapi.Response(
+                description="Cannot follow yourself or missing artist_id."
+            ),
+            404: openapi.Response(description="Artist not found."),
+        },
+    )
     @action(
         detail=False,
         methods=["post"],
@@ -34,6 +50,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         user_profile = request.user.userprofile
 
         try:
+            # Try to fetch the artist's profile based on the provided artist_id
             artist = UserProfile.objects.get(user__id=artist_id, account_type=2)
 
             if artist.user.id == user_profile.user.id:
@@ -42,6 +59,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            # Check if the user is already following the artist and toggle accordingly
             if artist in user_profile.following_artists.all():
                 user_profile.following_artists.remove(artist)
                 message = f"Successfully unfollowed {artist.showed_name}."
@@ -60,3 +78,36 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = UserProfile.objects.filter(account_type=2)
     serializer_class = ArtistSerializer
+
+    @swagger_auto_schema(
+        operation_description="Search for artists by their name.",
+        manual_parameters=[
+            openapi.Parameter(
+                "search",
+                openapi.IN_QUERY,
+                description="Search term for artist name",
+                type=openapi.TYPE_STRING,
+                required=True,
+            ),
+        ],
+        responses={
+            200: ArtistSerializer(many=True),
+            400: "Bad Request - 'search' parameter is required",
+        },
+    )
+    @action(detail=False, methods=["get"])
+    def search_artists(self, request):
+        search_term = request.query_params.get("search")
+        if not search_term:
+            return Response(
+                {"error": "The 'search' parameter is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Search for artists by showed_name matching the search term and account_type=2 (artist)
+        artists = UserProfile.objects.filter(
+            Q(showed_name__icontains=search_term) & Q(account_type=2)
+        ).distinct()
+
+        serializer = self.get_serializer(artists, many=True)
+        return Response(serializer.data)

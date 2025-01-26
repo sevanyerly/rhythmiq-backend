@@ -119,5 +119,4 @@ class SongCreateSerializer(serializers.ModelSerializer):
                 return duration_in_seconds
 
         except Exception as e:
-            print(f"Error extracting audio duration: {e}")
             return None

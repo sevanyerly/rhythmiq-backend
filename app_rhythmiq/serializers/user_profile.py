@@ -25,6 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ArtistSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    profile_picture_path = serializers.ImageField()
 
     class Meta:
         model = UserProfile

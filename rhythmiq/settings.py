@@ -172,7 +172,6 @@ SWAGGER_SETTINGS = {
     },
 }
 
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -196,4 +195,12 @@ LOGGING = {
             "style": "{",
         }
     },
+}
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "TIMEOUT": 300,
+    }
 }

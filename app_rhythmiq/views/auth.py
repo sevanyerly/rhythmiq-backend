@@ -14,9 +14,40 @@ from ..models import UserProfile
 
 from django.contrib.auth import get_user_model
 
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 User = get_user_model()
 
 
+@swagger_auto_schema(
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            "email": openapi.Schema(type=openapi.TYPE_STRING),
+            "password": openapi.Schema(type=openapi.TYPE_STRING),
+        },
+        required=["email", "password"],
+    ),
+    responses={
+        200: openapi.Response(
+            description="Successful login",
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "token": openapi.Schema(type=openapi.TYPE_STRING),
+                    "user_profile": UserProfileSerializer,
+                },
+            ),
+        ),
+        400: openapi.Response(
+            description="Bad request",
+        ),
+        401: openapi.Response(
+            description="Unauthorized",
+        ),
+    },
+)
 class LoginView(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
 
@@ -57,8 +88,25 @@ class LoginView(KnoxLoginView):
             {"token": token_response["token"], "user_profile": profile_serializer.data},
             status=status.HTTP_200_OK,
         )
-    
 
+
+@swagger_auto_schema(
+    operation_description="Log out the user and invalidate the session.",
+    responses={
+        200: openapi.Response(
+            description="Logout successful",
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "message": openapi.Schema(type=openapi.TYPE_STRING),
+                },
+            ),
+        ),
+        401: openapi.Response(
+            description="Unauthorized, user must be authenticated.",
+        ),
+    },
+)
 class LogoutView(LogoutView):
     permission_classes = [IsAuthenticated]
 
@@ -68,9 +116,33 @@ class LogoutView(LogoutView):
 
 
 class SignUpViewSet(ViewSet):
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "account_type": openapi.Schema(type=openapi.TYPE_INTEGER),
+                "private": openapi.Schema(type=openapi.TYPE_BOOLEAN, default=False),
+                "showed_name": openapi.Schema(type=openapi.TYPE_STRING),
+                "email": openapi.Schema(type=openapi.TYPE_STRING),
+                "password": openapi.Schema(type=openapi.TYPE_STRING),
+            },
+            required=["account_type", "showed_name", "email", "password"],
+        ),
+        responses={
+            201: openapi.Response(
+                description="User created successfully",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={"message": openapi.Schema(type=openapi.TYPE_STRING)},
+                ),
+            ),
+            400: "Bad Request",
+            409: "Conflict - Email already exists",
+        },
+    )
     def create(self, request):
         account_type = request.data.get("account_type")
-        visibility = request.data.get("visibility", False)
+        private = request.data.get("private", False)
 
         showed_name = request.data.get("showed_name")
         email = request.data.get("email")
@@ -82,19 +154,20 @@ class SignUpViewSet(ViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if account_type in [
-            "0",
+        if account_type not in [
+            1,
+            2,
         ]:
             return Response(
                 {"error": "Invalid account type."}, status=status.HTTP_400_BAD_REQUEST
             )
+
         # Check if email already exists
         if User.objects.filter(email=email).exists():
             return Response(
                 {"error": "User with this email already exists."},
-                status=status.HTTP_409_CONFLICT,  # Conflict HTTP status
+                status=status.HTTP_409_CONFLICT,
             )
-
         user_serializer = UserSerializer(data={"username": email, "email": email})
         if user_serializer.is_valid():
             user = user_serializer.save()
@@ -102,7 +175,7 @@ class SignUpViewSet(ViewSet):
             user.save()
             profile_data = {
                 "showed_name": showed_name,
-                "private": (True if visibility == "true" else False),
+                "private": (True if private else False),
                 "account_type": (account_type),
             }
             profile_serializer = UserProfileSerializer(data=profile_data)
@@ -125,6 +198,7 @@ class SignUpViewSet(ViewSet):
 class UserView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
+    @swagger_auto_schema(responses={200: UserProfileSerializer, 401: "Unauthorized"})
     def get(self, request):
         user_profile = request.user.userprofile
         serializer = UserProfileSerializer(user_profile)
