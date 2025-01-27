@@ -3,15 +3,232 @@
     "model": "app_rhythmiq.song",
     "pk": 1,
     "fields": {
-        "name": "Somewhere over the Rainbow",
-        "cover_image_path": "songs/Screenshot_from_2024-11-20_23-35-17.png",
-        "description": "Hear never before heard Isolated Vocals from \"Over the Rainbow\"!",
-        "mp3_path": "songs/Somewhere_over_the_Rainbow.mp3",
-        "created_at": "2024-11-20T22:39:00.256Z",
-        "duration": "03:47:00",
-        "streaming_numbers": 0,
+        "name": "Sugarsweet",
+        "cover_image_path": "songs/covers/cfee7f8f-555d-4b3a-aa3e-9dd3454dcd10.jpg",
+        "description": "Sugarsweet is a song created in 2019 by two famous artists !",
+        "song_path": "songs/1c01cf3c-076a-45f4-a069-56e8efde672b.mp3",
+        "created_at": "2025-01-27T23:34:02.336Z",
+        "duration": 189,
+        "streaming_numbers": 3,
         "artists": [
-            2
+            12,
+            13,
+            14
+        ],
+        "genres": [
+            1,
+            2,
+            4
+        ]
+    }
+},
+{
+    "model": "app_rhythmiq.song",
+    "pk": 2,
+    "fields": {
+        "name": "Wont Stop",
+        "cover_image_path": "songs/covers/2fbbe667-ead1-4a15-a28b-3d15ad759fe6.jpg",
+        "description": "A sad song",
+        "song_path": "songs/185a291e-094e-488c-9316-821cd5eac502.mp3",
+        "created_at": "2025-01-27T23:48:52.910Z",
+        "duration": 142,
+        "streaming_numbers": 2,
+        "artists": [
+            12,
+            14
+        ],
+        "genres": [
+            1,
+            2,
+            4
+        ]
+    }
+},
+{
+    "model": "app_rhythmiq.song",
+    "pk": 3,
+    "fields": {
+        "name": "Crosswalk Bounce",
+        "cover_image_path": "songs/covers/28805b78-bb5c-4c15-b3d8-e4533337c3d0.jpg",
+        "description": "",
+        "song_path": "songs/e90ab666-beda-452f-9867-7f5db9011fa9.mp3",
+        "created_at": "2025-01-27T23:50:01.724Z",
+        "duration": 172,
+        "streaming_numbers": 2,
+        "artists": [
+            12
+        ],
+        "genres": [
+            2,
+            4,
+            5
+        ]
+    }
+},
+{
+    "model": "app_rhythmiq.song",
+    "pk": 4,
+    "fields": {
+        "name": "True Detectives",
+        "cover_image_path": "songs/covers/040a0b8b-ac00-4bcf-9261-d5bb40400b3a.jpg",
+        "description": "",
+        "song_path": "songs/0542059f-27e4-4d4b-bb61-3f460154ab5e.mp3",
+        "created_at": "2025-01-27T23:51:09.277Z",
+        "duration": 139,
+        "streaming_numbers": 3,
+        "artists": [
+            12,
+            13
+        ],
+        "genres": [
+            1,
+            4
+        ]
+    }
+},
+{
+    "model": "app_rhythmiq.song",
+    "pk": 5,
+    "fields": {
+        "name": "Far West",
+        "cover_image_path": "songs/covers/508c2383-9b8a-4989-a004-36fc0cfd4d0d.jpg",
+        "description": "A personal song create for the comunity",
+        "song_path": "songs/bf4b798f-df91-4341-8665-d508d3f7326f.mp3",
+        "created_at": "2025-01-27T23:51:48.400Z",
+        "duration": 196,
+        "streaming_numbers": 4,
+        "artists": [
+            12
+        ],
+        "genres": [
+            5
+        ]
+    }
+},
+{
+    "model": "app_rhythmiq.song",
+    "pk": 6,
+    "fields": {
+        "name": "MayBe",
+        "cover_image_path": "songs/covers/94b3ecee-b0c6-41a5-9c17-eb6cd4e2e037.jpg",
+        "description": "The brand new song",
+        "song_path": "songs/f46808e4-6377-43f9-bc5b-939802bdcc88.mp3",
+        "created_at": "2025-01-27T23:52:32.240Z",
+        "duration": 196,
+        "streaming_numbers": 2,
+        "artists": [
+            12,
+            14
+        ],
+        "genres": [
+            2,
+            4
+        ]
+    }
+},
+{
+    "model": "app_rhythmiq.song",
+    "pk": 7,
+    "fields": {
+        "name": "Little Things",
+        "cover_image_path": "songs/covers/b80b1bc9-b6f2-43ba-93ad-52ee460c302c.jpg",
+        "description": "Little Things is a good song to think about something else.",
+        "song_path": "songs/1bf438b2-fb01-442d-a7a3-190b2360aa61.mp3",
+        "created_at": "2025-01-27T23:53:44.489Z",
+        "duration": 184,
+        "streaming_numbers": 3,
+        "artists": [
+            13,
+            14
+        ],
+        "genres": [
+            1,
+            3,
+            5
+        ]
+    }
+},
+{
+    "model": "app_rhythmiq.song",
+    "pk": 8,
+    "fields": {
+        "name": "SomeWhere over the Rainbow",
+        "cover_image_path": "songs/covers/771a6986-69a5-4182-b1fc-2a0a3d74cc54.jpg",
+        "description": "A old song for true people.",
+        "song_path": "songs/f4012655-96de-4d8f-8d37-b6c52710d0b8.mp3",
+        "created_at": "2025-01-27T23:56:15.544Z",
+        "duration": 227,
+        "streaming_numbers": 3,
+        "artists": [
+            13,
+            14
+        ],
+        "genres": [
+            1,
+            5
+        ]
+    }
+},
+{
+    "model": "app_rhythmiq.song",
+    "pk": 9,
+    "fields": {
+        "name": "Cosmonkey",
+        "cover_image_path": "songs/covers/cbd2a077-0fc3-4eaa-88c9-494b8957a4db.jpg",
+        "description": "Song for youtube video",
+        "song_path": "songs/8584c244-3ed5-45a5-b241-f25515e7a0a1.mp3",
+        "created_at": "2025-01-28T00:01:42.323Z",
+        "duration": 137,
+        "streaming_numbers": 2,
+        "artists": [
+            13
+        ],
+        "genres": [
+            3,
+            5
+        ]
+    }
+},
+{
+    "model": "app_rhythmiq.song",
+    "pk": 10,
+    "fields": {
+        "name": "Moden Aquatic",
+        "cover_image_path": "songs/covers/cb7f59a9-414c-4a56-9758-15d90bc8296b.jpg",
+        "description": "An Aquatic song.",
+        "song_path": "songs/7d1521e9-a731-472a-be93-b6f5b1cd4fc4.mp3",
+        "created_at": "2025-01-28T00:03:43.148Z",
+        "duration": 185,
+        "streaming_numbers": 2,
+        "artists": [
+            13,
+            14
+        ],
+        "genres": [
+            1,
+            3
+        ]
+    }
+},
+{
+    "model": "app_rhythmiq.song",
+    "pk": 11,
+    "fields": {
+        "name": "Papercut",
+        "cover_image_path": "songs/covers/dab43a1f-edb0-4377-9ad5-d561bbeb4925.jpg",
+        "description": "To cut the paper",
+        "song_path": "songs/8e846a61-0817-432e-a520-38dc3298eee9.mp3",
+        "created_at": "2025-01-28T00:05:57.088Z",
+        "duration": 115,
+        "streaming_numbers": 2,
+        "artists": [
+            12,
+            13
+        ],
+        "genres": [
+            2,
+            3,
+            5
         ]
     }
 }

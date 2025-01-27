@@ -116,6 +116,8 @@ class LogoutView(LogoutView):
 
 
 class SignUpViewSet(ViewSet):
+    permission_classes = [permissions.AllowAny]
+
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,

@@ -28,7 +28,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True
     )
-    showed_name = models.CharField(max_length=255, blank=True)
+    showed_name = models.CharField(max_length=30, blank=True)
     profile_picture_path = models.ImageField(
         upload_to=profile_picture_path,
         blank=True,

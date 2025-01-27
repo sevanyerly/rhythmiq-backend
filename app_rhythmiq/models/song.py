@@ -21,7 +21,7 @@ def cover_image_path(instance, filename):
 
 
 class Song(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=100)
     cover_image_path = models.ImageField(
         upload_to=cover_image_path, blank=True, null=True
     )

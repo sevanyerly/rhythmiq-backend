@@ -3,35 +3,35 @@
     "model": "app_rhythmiq.genre",
     "pk": 1,
     "fields": {
-        "name": "Rock"
+        "name": "Folk"
     }
 },
 {
     "model": "app_rhythmiq.genre",
     "pk": 2,
     "fields": {
-        "name": "Hip hop"
+        "name": "Rock"
     }
 },
 {
     "model": "app_rhythmiq.genre",
     "pk": 3,
     "fields": {
-        "name": "Pop"
+        "name": "Techno"
     }
 },
 {
     "model": "app_rhythmiq.genre",
     "pk": 4,
     "fields": {
-        "name": "Country"
+        "name": "Hard Rock"
     }
 },
 {
     "model": "app_rhythmiq.genre",
     "pk": 5,
     "fields": {
-        "name": "Funk"
+        "name": "Electro"
     }
 }
 ]

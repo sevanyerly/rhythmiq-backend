@@ -1,26 +1,49 @@
 [
 {
     "model": "app_rhythmiq.userprofile",
-    "pk": 1,
+    "pk": 11,
     "fields": {
-        "user": 1,
-        "showed_name": "vanlens",
-        "profile_picture_path": "profiles/squeezie.jpg",
+        "showed_name": "VanLenS",
+        "profile_picture_path": "profiles/55460864-8c3f-45a8-a06b-dd8113eb5a38.jpeg",
         "private": false,
+        "account_type": 1,
         "following_artists": []
     }
 },
 {
     "model": "app_rhythmiq.userprofile",
-    "pk": 2,
+    "pk": 12,
     "fields": {
-        "user": 2,
-        "showed_name": "jeanjeanlartiste",
-        "profile_picture_path": "profiles/he-arc.png",
-        "private": true,
+        "showed_name": "Fabricio",
+        "profile_picture_path": "profiles/default_profile_picture.png",
+        "private": false,
+        "account_type": 2,
+        "following_artists": []
+    }
+},
+{
+    "model": "app_rhythmiq.userprofile",
+    "pk": 13,
+    "fields": {
+        "showed_name": "JeanFab",
+        "profile_picture_path": "profiles/800a3f55-6c12-4831-be51-095e6c259328.jpg",
+        "private": false,
+        "account_type": 2,
         "following_artists": [
-            1
+            12,
+            14
         ]
+    }
+},
+{
+    "model": "app_rhythmiq.userprofile",
+    "pk": 14,
+    "fields": {
+        "showed_name": "JeanPaul",
+        "profile_picture_path": "profiles/default_profile_picture.png",
+        "private": false,
+        "account_type": 2,
+        "following_artists": []
     }
 }
 ]

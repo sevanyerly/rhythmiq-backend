@@ -1,0 +1,92 @@
+[
+{
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$S8dtz6AdSQcQQm9C5lMXC9$4ubncFCf+uLj0qRxDxyIQ37kh+0on30+Wg7kZWZCdGM=",
+        "last_login": "2025-01-25T15:20:23.726Z",
+        "is_superuser": true,
+        "username": "sevan",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-01-25T15:20:03.564Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 11,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$LTRtXbMq4ef2xdC0JhOyJK$YjfSdAEbc3vBO9JA3iUjltqk841JgmuXh5kbbPtxj4Q=",
+        "last_login": "2025-01-28T00:08:52.439Z",
+        "is_superuser": false,
+        "username": "sevan.yerly@he-arc.ch",
+        "first_name": "",
+        "last_name": "",
+        "email": "sevan.yerly@he-arc.ch",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-27T23:21:05.455Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 12,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$2hL9DanF67OMQVVgHOCr22$iEbQTInMoNLQ8m5fSbBw0Vcb3kkmA/sHt6EqenMxXDM=",
+        "last_login": "2025-01-27T23:49:28.821Z",
+        "is_superuser": false,
+        "username": "Fabricio@gmail.com",
+        "first_name": "",
+        "last_name": "",
+        "email": "Fabricio@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-27T23:30:05.042Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 13,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$oNTQv1C2XSh8gPQS0zzw1Z$zJuGaW66pfKYezaCQXmio3yfNux9Gr40Nmvjo93l/nY=",
+        "last_login": "2025-01-27T23:52:47.033Z",
+        "is_superuser": false,
+        "username": "JeanFab@he-arc.ch",
+        "first_name": "",
+        "last_name": "",
+        "email": "JeanFab@he-arc.ch",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-27T23:30:30.179Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 14,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$nDHoXBvxPwbQ2BZCTwY3ek$Lc6gcmkjLbt1Wxb0XA6I48fcbYrHvxw0jL6YtsY3LL0=",
+        "last_login": "2025-01-27T23:31:45.123Z",
+        "is_superuser": false,
+        "username": "JeanPaul@he-arc.ch",
+        "first_name": "",
+        "last_name": "",
+        "email": "JeanPaul@he-arc.ch",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-27T23:31:44.670Z",
+        "groups": [],
+        "user_permissions": []
+    }
+}
+]
