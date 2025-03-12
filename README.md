@@ -7,7 +7,10 @@ This is the readme from the django backend of the rhythmiq application.
 To launch the project, you need to retrieve the media available via the following link and store them in the root of the project in the media/ folder.
 
 https://www.swisstransfer.com/d/8a32e5a7-bbd5-4291-9751-feaee5a2aea2
+ (no longer available)
 
+For the application to work properly, you can simply create the folder tree and add a default_profile_picture.png image of your choice.
+ 
 ```
 ├── manage.py
 ├── media
